@@ -2,3 +2,4 @@ Pipfile
 Pipfile.lock
 test.py
 .env
+todo.txt
