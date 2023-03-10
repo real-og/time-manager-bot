@@ -8,10 +8,10 @@ from states import *
 async def handle_menu(message: types.Message):
     input = message.text
     if input == kb.start:
-        await message.answer(texts.menu, reply_markup=kb.meny_kb)
+        await message.answer(texts.menu, reply_markup=kb.menu_kb)
         await State.menu.set()
     if input == kb.finish:
-        await message.answer(texts.menu, reply_markup=kb.meny_kb)
+        await message.answer(texts.menu, reply_markup=kb.menu_kb)
         await State.menu.set()
     if input == kb.analysis:
         pass

@@ -9,7 +9,7 @@ import logic
 @dp.message_handler(commands=['start'], state="*")
 async def send_welcome(message: types.Message, state: FSMContext):
     await state.update_data(cats=logic.default_cats)
-    print(state)
     await message.answer(texts.menu, reply_markup=kb.menu_kb)
-
     await State.menu.set()
+
+

@@ -20,7 +20,7 @@ cats_kb = ReplyKeyboardMarkup(keyboard = [[add, remove],
                               resize_keyboard=True,
                               one_time_keyboard=True)
 
-back_kb = ReplyKeyboardMarkup(keyboard = back,
+back_kb = ReplyKeyboardMarkup(keyboard = [[back]],
                               resize_keyboard=True,
                               one_time_keyboard=True)
 
