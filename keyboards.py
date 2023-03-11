@@ -1,6 +1,7 @@
 from aiogram.types import ReplyKeyboardRemove, \
     ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton
+from typing import List
 
 start = 'Начать'
 finish = 'Закончить'
@@ -23,5 +24,12 @@ cats_kb = ReplyKeyboardMarkup(keyboard = [[add, remove],
 back_kb = ReplyKeyboardMarkup(keyboard = [[back]],
                               resize_keyboard=True,
                               one_time_keyboard=True)
+
+def compose_categories_kb(cats: List[str]) -> ReplyKeyboardMarkup:
+    kb = ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+    for cat in cats:
+        kb.add(KeyboardButton(cat))
+    kb.add(back)
+    return kb
 
 

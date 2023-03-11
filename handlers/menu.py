@@ -10,8 +10,9 @@ from states import *
 async def handle_menu(message: types.Message, state: FSMContext):
     input = message.text
     if input == kb.start:
-        await message.answer(texts.menu, reply_markup=kb.menu_kb)
-        await State.menu.set()
+        cats = await logic.get_state_var(state, 'cats')
+        await message.answer(texts.choose_action, reply_markup=kb.compose_categories_kb(cats))
+        await State.start_action.set()
     if input == kb.finish:
         await message.answer(texts.menu, reply_markup=kb.menu_kb)
         await State.menu.set()

@@ -5,3 +5,4 @@ class State(StatesGroup):
     categories = State()
     removing = State()
     adding = State()
+    start_action = State()

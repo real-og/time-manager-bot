@@ -5,6 +5,9 @@ from states import *
 from datetime import datetime
 import json
 
+
+default_cats = ['Сон', 'Дорога', 'Еда', 'Работа', 'Учёба']
+
 class Action():
     def __init__(self, name: str, start: datetime, end: datetime = None) -> None:
         self.name = name
@@ -34,10 +37,7 @@ class Action():
             action.end = datetime.strptime(data['end'], "%Y-%m-%d %H:%M:%S")
         return action
 
-default_cats = ['Сон', 'Дорога', 'Еда', 'Работа', 'Учёба']
 
-def get_categories(id: int) -> List[str]:
-    pass
 
 async def add_to_state_list(state: FSMContext, list_name: str, item: Any):
     data = await state.get_data()
@@ -60,6 +60,22 @@ async def remove_from_state_list(state: FSMContext, list_name: str, item: Any):
 
 async def get_state_var(state: FSMContext, var_name: str) -> Any:
     data = await state.get_data()
-    if data.get(var_name):
-        return data[var_name]
-    return None
+    return data.get(var_name)
+
+async def finish_current_action(state: FSMContext) -> None:
+    data = await state.get_data()
+    actions = data.get('actions')
+    curr_action_str = data.get('curr_action')
+    if curr_action_str:
+        curr_action = Action.get_entity(curr_action_str)
+        curr_action.finish()
+        actions.append(curr_action.json())
+        curr_action_str = None
+    await state.update_data(curr_action=curr_action_str, actions=actions)
+
+async def start_action(action: Action, state: FSMContext) -> None:
+    await finish_current_action(state)
+    await state.update_data(curr_action=action.json())
+
+    
+
