@@ -6,6 +6,7 @@ from aiogram.dispatcher import FSMContext
 from states import *
 import logic
 
+
 @dp.message_handler(commands=['start'], state="*")
 async def send_welcome(message: types.Message, state: FSMContext):
     await state.update_data(cats=logic.default_cats)

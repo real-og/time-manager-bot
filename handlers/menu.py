@@ -1,11 +1,13 @@
 from loader import dp
 import texts
 from aiogram import types
+from aiogram.dispatcher import FSMContext
+import logic
 import keyboards as kb
 from states import *
 
 @dp.message_handler(state=State.menu)
-async def handle_menu(message: types.Message):
+async def handle_menu(message: types.Message, state: FSMContext):
     input = message.text
     if input == kb.start:
         await message.answer(texts.menu, reply_markup=kb.menu_kb)
@@ -18,6 +20,7 @@ async def handle_menu(message: types.Message):
     if input == kb.today_stat:
         pass
     if input == kb.categories:
-        await message.answer(texts.compose_cats(['test1', 'test2']), reply_markup=kb.cats_kb)
+        cats = await logic.get_state_var(state, 'cats')
+        await message.answer(texts.compose_cats(cats), reply_markup=kb.cats_kb)
         await State.categories.set()
         

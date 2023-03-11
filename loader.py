@@ -10,8 +10,8 @@ logging.basicConfig(level=logging.INFO)
 SHEET_LINK = str(os.environ.get('SHEET_LINK'))
 API_TOKEN = str(os.environ.get('BOT_TOKEN'))
 
-# storage = RedisStorage2(db=3)
-storage = MemoryStorage()
+storage = RedisStorage2(db=3)
+# storage = MemoryStorage()
 bot = Bot(token=API_TOKEN, parse_mode="HTML")
 
 dp = Dispatcher(bot, storage=storage)

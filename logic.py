@@ -1,5 +1,38 @@
 from typing import List, Any
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher import FSMContext
+from states import *
+from datetime import datetime
+import json
+
+class Action():
+    def __init__(self, name: str, start: datetime, end: datetime = None) -> None:
+        self.name = name
+        self.start = start
+        self.end = end
+
+    def finish(self):
+        self.end = datetime.now()
+    
+    def json(self) -> str:
+        data = {
+            "name": self.name,
+            "start": self.start.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        data['end'] = self.end.strftime("%Y-%m-%d %H:%M:%S") if self.end else None
+        return json.dumps(data, indent=4)
+
+    def __str__(self) -> str:
+        return f"Action: {self.name} from {self.start} till {self.end}"
+
+    @classmethod
+    def get_entity(cls, action_str: str):
+        data = json.loads(action_str)
+        action = Action(data['name'],
+                        datetime.strptime(data['start'], "%Y-%m-%d %H:%M:%S"))
+        if data['end']:
+            action.end = datetime.strptime(data['end'], "%Y-%m-%d %H:%M:%S")
+        return action
 
 default_cats = ['Сон', 'Дорога', 'Еда', 'Работа', 'Учёба']
 
