@@ -1,7 +1,7 @@
 from typing import List
 from datetime import datetime
 from aiogram.dispatcher import FSMContext
-from logic import Action
+from logic import Action, group_by_name
 
 start = "lets go!"
 
@@ -32,3 +32,26 @@ def compose_confirmation(curr_action: Action) -> str:
 confirmed = 'Сделано'
 aborted = 'Отменено'
 wrong_input = 'не понял'
+
+async def compose_today_stat(state: FSMContext) -> str:
+    data = await state.get_data()
+    curr_action = data.get('curr_action')
+    actions = data.get('actions')
+    text = str(Action.get_entity(curr_action)) if curr_action else "Сейчас ничего не выполняете"
+    if len(actions) == 0:
+        return text + '\n\nСегодня ничего не выполняли.'
+    text += '\n\nСегодня делали:\n\n'
+    for action_str in actions:
+        action = Action.get_entity(action_str)
+
+        text += f"{action.start.time()} - {action.end.time()} <b>{action.name} | </b>"
+        if action.get_duration_mins() >= 60:
+            text += f'{action.get_duration_mins() / 60}ч {action.get_duration_mins() % 60} мин\n'
+        else:
+            text += f'{action.get_duration_mins()} мин\n'
+
+    text += "*************\nПо категориям:\n\n"
+    for name, mins in group_by_name(actions).items():
+        text += f"<b>{name}</b> {mins / 60}ч {mins % 60}мин\n"
+    return text
+

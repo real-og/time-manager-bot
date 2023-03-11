@@ -21,7 +21,8 @@ async def handle_menu(message: types.Message, state: FSMContext):
     if input == kb.analysis:
         pass
     if input == kb.today_stat:
-        pass
+        text = await texts.compose_today_stat(state)
+        await message.answer(text, reply_markup=kb.menu_kb)
     if input == kb.categories:
         cats = await logic.get_state_var(state, 'cats')
         await message.answer(texts.compose_cats(cats), reply_markup=kb.cats_kb)

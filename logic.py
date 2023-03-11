@@ -1,4 +1,4 @@
-from typing import List, Any, Optional
+from typing import List, Any, Optional, Dict, Union
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher import FSMContext
 from states import *
@@ -16,6 +16,10 @@ class Action():
 
     def finish(self):
         self.end = datetime.now()
+
+    def get_duration_mins(self) -> int:
+        end = self.end if self.end else datetime.now()
+        return int((end - self.start).total_seconds() / 60)
     
     def json(self) -> str:
         data = {
@@ -78,6 +82,23 @@ async def finish_current_action(state: FSMContext) -> None:
 async def start_action(action: Action, state: FSMContext) -> None:
     await finish_current_action(state)
     await state.update_data(curr_action=action.json())
+
+
+def group_by_name(list: List[Union[Action, str]]) -> Dict[str, int]:
+    """
+    Returns:
+        Dict[str, int]: the key is the name of action
+        and the value is the number of spent minutes
+    """
+    result = dict()
+    for item in list:
+        if isinstance(item, str):
+            item = Action.get_entity(item)
+        if result.get(item.name):
+            result[item.name] += item.get_duration_mins()
+        else:
+            result[item.name] = item.get_duration_mins()
+    return result
 
     
 

@@ -9,7 +9,6 @@ from states import *
 
 @dp.message_handler(state=State.confirm_removing)
 async def confirm_removing(message: types.Message, state: FSMContext):
-    print(22)
     input = message.text
     if input == kb.no:
         await message.answer(texts.aborted, reply_markup=kb.menu_kb)
