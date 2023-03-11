@@ -14,8 +14,10 @@ async def handle_menu(message: types.Message, state: FSMContext):
         await message.answer(texts.choose_action, reply_markup=kb.compose_categories_kb(cats))
         await State.start_action.set()
     if input == kb.finish:
-        await message.answer(texts.menu, reply_markup=kb.menu_kb)
-        await State.menu.set()
+        curr_action_str = await logic.get_state_var(state, 'curr_action')
+        await message.answer(texts.compose_confirmation(logic.Action.get_entity(curr_action_str)),
+                                                        reply_markup=kb.confirm_kb)
+        await State.confirm_removing.set()
     if input == kb.analysis:
         pass
     if input == kb.today_stat:

@@ -1,5 +1,7 @@
 from typing import List
 from datetime import datetime
+from aiogram.dispatcher import FSMContext
+from logic import Action
 
 start = "lets go!"
 
@@ -24,3 +26,9 @@ choose_action = 'что делаешь - из клавы или вводи са�
 def compose_started(name: str, start_datetime: datetime) -> str:
     return f"Начато <b>{name}</b> в {start_datetime.strftime('%Y-%m-%d %H:%M:%S')}"
 
+def compose_confirmation(curr_action: Action) -> str:
+    return f"точно закончить {curr_action}"
+
+confirmed = 'Сделано'
+aborted = 'Отменено'
+wrong_input = 'не понял'

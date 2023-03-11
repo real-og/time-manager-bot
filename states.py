@@ -6,3 +6,4 @@ class State(StatesGroup):
     removing = State()
     adding = State()
     start_action = State()
+    confirm_removing = State()

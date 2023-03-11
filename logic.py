@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Optional
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher import FSMContext
 from states import *
@@ -29,7 +29,9 @@ class Action():
         return f"Action: {self.name} from {self.start} till {self.end}"
 
     @classmethod
-    def get_entity(cls, action_str: str):
+    def get_entity(cls, action_str: str) -> Optional['Action']:
+        if action_str == None:
+            return None 
         data = json.loads(action_str)
         action = Action(data['name'],
                         datetime.strptime(data['start'], "%Y-%m-%d %H:%M:%S"))

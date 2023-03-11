@@ -32,4 +32,10 @@ def compose_categories_kb(cats: List[str]) -> ReplyKeyboardMarkup:
     kb.add(back)
     return kb
 
+yes = 'Да'
+no = 'Нет'
+confirm_kb = ReplyKeyboardMarkup(keyboard = [[yes, no]],
+                                resize_keyboard=True,
+                                one_time_keyboard=True)
+
 
