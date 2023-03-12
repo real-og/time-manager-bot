@@ -77,7 +77,8 @@ async def compose_today_stat(state: FSMContext) -> str:
         actions.append(curr_action)
     if len(actions) != 0:
         text += "\n\n<b><i>***Суммарно за день***</i></b>\n\n"
-        for name, secs in group_by_name(actions).items():
+        sorted_dict = sorted(group_by_name(actions).items(), key=lambda x: x[1], reverse=True)
+        for name, secs in sorted_dict:
             text += f"<b>{name}: </b>{compose_time_delta(secs)}\n"
     return text
 
