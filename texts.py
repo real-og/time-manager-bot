@@ -5,7 +5,16 @@ from logic import Action, group_by_name
 
 start = "lets go!"
 
-menu = "Ты в меню"
+# menu = "Ты в меню"
+
+async def compose_menu(state: FSMContext) -> str:
+    text = '📋<b>Меню</b>📋\n\n'
+    data = await state.get_data()
+    act = Action.get_entity(data.get('curr_action'))
+    if act:
+        return text + f"<i>Сейчас: <b>{act.name}</b> уже <b>{compose_time_delta(act.get_duration_secs())}</b></i>"
+    return text + "<i>Сейчас ничего не выполняется</i>"
+
 
 def compose_cats(categories: List[str]) -> str:
     if categories == None or len(categories) == 0:
@@ -15,23 +24,26 @@ def compose_cats(categories: List[str]) -> str:
         text += f"<b>{i+1}.</b> {cat}\n"
     return text
 
-ask_for_num = 'Вводи название категории, которая будет удалёна'
-ask_for_name = "Вводи имя"
+ask_for_num = 'Вводи <b>название</b> категории, которая будет удалёна🗑'
+ask_for_name = "Вводи <b>название</b> кастомной категории📌"
 
-added = 'Добавлено'
-removed = 'Удалено'
+added = '<i><b>Добавлено☑️</b></i>'
+removed = '<i><b>Удалено☑️</b></i>'
 
-choose_action = 'что делаешь - из клавы или вводи сам'
+choose_action = '📝<b>Что начинаешь делать?</b>\n\n<i>Выбирай из категорий или вводи текстом</i>'
 
 def compose_started(name: str, start_datetime: datetime) -> str:
-    return f"Начато <b>{name}</b> в {start_datetime.strftime('%Y-%m-%d %H:%M:%S')}"
+    return f"⏳ Начато <b>{name}</b> в {start_datetime.strftime('%H:%M:%S')}"
+
+def compose_finished(action: Action) -> str:
+    return f"⌛️ Окончено <b>{action.name}</b> спустя {compose_time_delta(action.get_duration_secs())}"
 
 def compose_confirmation(curr_action: Action) -> str:
-    return f"точно закончить {curr_action}"
+    return f"Точно закончить <b>{curr_action.name}?</b>"
 
 confirmed = 'Сделано'
 aborted = 'Отменено'
-wrong_input = 'не понял'
+wrong_input = 'не понял ...\n\n<i>Используй клавиатуру или /start</i>'
 
 def compose_time_delta(secs: int) -> str:
     text = ''
@@ -53,16 +65,34 @@ async def compose_today_stat(state: FSMContext) -> str:
         text = str(Action.get_entity(curr_action)) if curr_action else "<i>Прямо сейчас ничего не выполняете</i>"
 
     if len(actions) == 0:
-        return text + '\n\n<i>Сегодня ещё без активностей ((</i>'
-    text += '\n\n<b><i>***Сегодня уже сделано***</i></b>\n\n'
-    text += 'Начало  | Действие | Длительность\n'
-    for action_str in actions:
-        action = Action.get_entity(action_str)
-        text += f"{action.start.time()} <b>| {action.name} |</b> {compose_time_delta(action.get_duration_secs())}\n"
+        text += '\n\n<i>Сегодня ещё без законченных активностей ((</i>'
+    else:
+        text += '\n\n<b><i>***Сегодня уже сделано***</i></b>\n\n'
+        text += 'Начало  | Действие | Длительность'
+        for action_str in actions:
+            action = Action.get_entity(action_str)
+            text += f"\n{action.start.time()} <b>| {action.name} |</b> {compose_time_delta(action.get_duration_secs())}"
 
-
-    text += "\n<b><i>***Суммарно за день***</i></b>\n\n"
-    for name, secs in group_by_name(actions).items():
-        text += f"<b>{name}: </b>{compose_time_delta(secs)}\n"
+    if curr_action:
+        actions.append(curr_action)
+    if len(actions) != 0:
+        text += "\n\n<b><i>***Суммарно за день***</i></b>\n\n"
+        for name, secs in group_by_name(actions).items():
+            text += f"<b>{name}: </b>{compose_time_delta(secs)}\n"
     return text
+
+nothing_happens = "<i>Сейчас ничего не происходит</i>"
+no_such_category = "<i>Такой категории нет</i>"
+
+help = """<b><i>Этот бот помогает следить, на что уходят 24 часа в твоих сутках</i></b>
+
+<b>"Начать"</b> - включай, когда начинаешь делать что-то новое: учить английский, готовить завтрак, играть к CS. Если что-то уже начато, оно автоматически завершится.
+
+<b>"Закончить"</b> - если решил что-то закончить и ничего не начинать. ушёл в себя.
+
+<b>"Категории"</b> - здесь ты можешь добавлять и удалять наиболее частые дела, чтобы потом более просто начинать и завершать их.
+
+<b>"Статистика сегодня"</b> - все твои действия по порядку, а также суммарное время, потраченное на каждое занятие.
+
+<b>"Аналитика"</b> - пиши @bot_deal, что хочешь здесь увидеть: отчёт по дням, отчет за неделю, а что в отчетах? а может график или диаграмму мм?"""
 

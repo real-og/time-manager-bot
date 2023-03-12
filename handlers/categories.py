@@ -7,7 +7,7 @@ import logic
 from states import *
 
 @dp.message_handler(state=State.categories)
-async def handle_cats(message: types.Message):
+async def handle_cats(message: types.Message, state: FSMContext):
     input = message.text
     if input == kb.add:
         await message.answer(texts.ask_for_name, reply_markup=kb.back_kb)
@@ -16,14 +16,16 @@ async def handle_cats(message: types.Message):
         await message.answer(texts.ask_for_num, reply_markup=kb.back_kb)
         await State.removing.set()
     if input == kb.back:
-        await message.answer(texts.menu, reply_markup=kb.menu_kb)
+        menu = await texts.compose_menu(state)
+        await message.answer(menu, reply_markup=kb.menu_kb)
         await State.menu.set()
 
 @dp.message_handler(state=State.adding)
 async def add_cat(message: types.Message, state: FSMContext):
     input = message.text
     if input == kb.back:
-        await message.answer(texts.menu, reply_markup=kb.menu_kb)
+        menu = await texts.compose_menu(state)
+        await message.answer(menu, reply_markup=kb.menu_kb)
         await State.menu.set()
     else:
         await logic.add_to_state_list(state, 'cats', input)
@@ -36,12 +38,17 @@ async def add_cat(message: types.Message, state: FSMContext):
 async def remove_cat(message: types.Message, state: FSMContext):
     input = message.text
     if input == kb.back:
-        await message.answer(texts.menu, reply_markup=kb.menu_kb)
+        menu = await texts.compose_menu(state)
+        await message.answer(menu, reply_markup=kb.menu_kb)
         await State.menu.set()
     else:
-        await logic.remove_from_state_list(state, 'cats', input)
         cats = await logic.get_state_var(state, 'cats')
-        await message.answer(texts.removed)
+        if input in cats:
+            await logic.remove_from_state_list(state, 'cats', input)
+            cats.remove(input)
+            await message.answer(texts.removed)
+        else:
+            await message.answer(texts.no_such_category)
         await message.answer(texts.compose_cats(cats), reply_markup=kb.cats_kb)
         await State.categories.set()
 
