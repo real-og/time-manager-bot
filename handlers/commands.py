@@ -5,12 +5,13 @@ import keyboards as kb
 from aiogram.dispatcher import FSMContext
 from states import *
 import logic
+import sys
 
 
 @dp.message_handler(commands=['start'], state="*")
 async def send_welcome(message: types.Message, state: FSMContext):
     data = await state.get_data()
-
+    print(sys.getsizeof(data))
     cats = data.get('cats', logic.default_cats)
     curr_action = data.get('curr_action')
     actions = data.get('actions', [])

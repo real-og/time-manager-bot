@@ -33,25 +33,36 @@ confirmed = 'Сделано'
 aborted = 'Отменено'
 wrong_input = 'не понял'
 
+def compose_time_delta(secs: int) -> str:
+    text = ''
+    if secs >= 60 * 60:
+        text += f"{secs // (60 * 60)} ч  "
+    if secs >= 60:
+        text += f"{secs % (60 * 60) // 60} мин  "
+    text += f"{secs % 60} сек"
+    return text
+
 async def compose_today_stat(state: FSMContext) -> str:
     data = await state.get_data()
     curr_action = data.get('curr_action')
     actions = data.get('actions')
-    text = str(Action.get_entity(curr_action)) if curr_action else "Сейчас ничего не выполняете"
+    if curr_action:
+        act = Action.get_entity(curr_action)
+        text = f"<i>Прямо сейчас:</i>\n<b>{act.name}</b> уже {compose_time_delta(act.get_duration_secs())}"
+    else:
+        text = str(Action.get_entity(curr_action)) if curr_action else "<i>Прямо сейчас ничего не выполняете</i>"
+
     if len(actions) == 0:
-        return text + '\n\nСегодня ничего не выполняли.'
-    text += '\n\nСегодня делали:\n\n'
+        return text + '\n\n<i>Сегодня ещё без активностей ((</i>'
+    text += '\n\n<b><i>***Сегодня уже сделано***</i></b>\n\n'
+    text += 'Начало  | Действие | Длительность\n'
     for action_str in actions:
         action = Action.get_entity(action_str)
+        text += f"{action.start.time()} <b>| {action.name} |</b> {compose_time_delta(action.get_duration_secs())}\n"
 
-        text += f"{action.start.time()} - {action.end.time()} <b>{action.name} | </b>"
-        if action.get_duration_mins() >= 60:
-            text += f'{action.get_duration_mins() / 60}ч {action.get_duration_mins() % 60} мин\n'
-        else:
-            text += f'{action.get_duration_mins()} мин\n'
 
-    text += "*************\nПо категориям:\n\n"
-    for name, mins in group_by_name(actions).items():
-        text += f"<b>{name}</b> {mins / 60}ч {mins % 60}мин\n"
+    text += "\n<b><i>***Суммарно за день***</i></b>\n\n"
+    for name, secs in group_by_name(actions).items():
+        text += f"<b>{name}: </b>{compose_time_delta(secs)}\n"
     return text
 

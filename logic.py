@@ -17,9 +17,9 @@ class Action():
     def finish(self):
         self.end = datetime.now()
 
-    def get_duration_mins(self) -> int:
+    def get_duration_secs(self) -> int:
         end = self.end if self.end else datetime.now()
-        return int((end - self.start).total_seconds() / 60)
+        return int((end - self.start).total_seconds())
     
     def json(self) -> str:
         data = {
@@ -88,16 +88,16 @@ def group_by_name(list: List[Union[Action, str]]) -> Dict[str, int]:
     """
     Returns:
         Dict[str, int]: the key is the name of action
-        and the value is the number of spent minutes
+        and the value is the number of spent seconds
     """
     result = dict()
     for item in list:
         if isinstance(item, str):
             item = Action.get_entity(item)
         if result.get(item.name):
-            result[item.name] += item.get_duration_mins()
+            result[item.name] += item.get_duration_secs()
         else:
-            result[item.name] = item.get_duration_mins()
+            result[item.name] = item.get_duration_secs()
     return result
 
     
