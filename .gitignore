@@ -4,3 +4,4 @@ test.py
 .env
 todo.txt
 __pycache__
+nohup.out
