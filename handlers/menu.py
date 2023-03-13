@@ -8,6 +8,7 @@ from states import *
 
 @dp.message_handler(state=State.menu)
 async def handle_menu(message: types.Message, state: FSMContext):
+    lang_code = message.from_user.language_code
     input = message.text
     if input == kb.start:
         cats = await logic.get_state_var(state, 'cats')
@@ -31,5 +32,5 @@ async def handle_menu(message: types.Message, state: FSMContext):
         await message.answer(texts.compose_cats(cats), reply_markup=kb.cats_kb)
         await State.categories.set()
     if input == kb.help:
-        await message.answer(texts.help, reply_markup=kb.menu_kb)
+        await message.answer(texts.help[lang_code], reply_markup=kb.menu_kb)
         

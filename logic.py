@@ -4,9 +4,14 @@ from aiogram.dispatcher import FSMContext
 from states import *
 from datetime import datetime
 import json
+from aiogram import types
 
 
 default_cats = ['Сон', 'Дорога', 'Еда', 'Работа', 'Учёба']
+supported_langs = ['en', 'ru']
+
+def check_language(lang: str) -> str:
+    return lang if lang in supported_langs else 'en'
 
 class Action():
     def __init__(self, name: str, start: datetime, end: datetime = None) -> None:

@@ -4,6 +4,10 @@ from aiogram.dispatcher import FSMContext
 from logic import Action, group_by_name
 
 start = "lets go!"
+start = {   'ru' : 'Поехали',
+            'en' : "Let's go",
+            'be' : "Пачынаеи" 
+}
 
 # menu = "Ты в меню"
 
@@ -97,3 +101,16 @@ help = """<b><i>Этот бот помогает следить, на что у�
 
 <b>"Аналитика"</b> - пиши @bot_deal, что хочешь здесь увидеть: отчёт по дням, отчет за неделю, а что в отчетах? а может график или диаграмму мм?"""
 
+help = {'ru' : """<b><i>Этот бот помогает следить, на что уходят 24 часа в твоих сутках</i></b>\n
+<b>"Начать"</b> - включай, когда начинаешь делать что-то новое: учить английский, готовить завтрак, играть к CS. Если что-то уже начато, оно автоматически завершится.\n
+<b>"Закончить"</b> - если решил что-то закончить и ничего не начинать. ушёл в себя.\n
+<b>"Категории"</b> - здесь ты можешь добавлять и удалять наиболее частые дела, чтобы потом более просто начинать и завершать их.\n
+<b>"Статистика сегодня"</b> - все твои действия по порядку, а также суммарное время, потраченное на каждое занятие.\n
+<b>"Аналитика"</b> - пиши @bot_deal, что хочешь здесь увидеть: отчёт по дням, отчет за неделю, а что в отчетах? а может график или диаграмму мм?""",
+
+        'en' : """<b><i>This bot helps to keep track of how you spend your time during the day</i></b>\n
+<b>"Start"</b> - choose when you start doing something new: learning English, cooking breakfast, playing CS. If something has already started, it will automatically finished.\n
+<b>"Finish"</b> - if you decide to finish something and not start anything. Something you don't want to talk about or just staring ate the wall.\n
+<b>"Categories"</b> - here you can manage the most frequent activities so that they appear as buttons when you decide to start something\n
+<b>"Today stat"</b> - all your activities in order and  the total time spent on each one.\n
+<b>"analytics"</b> - text @bot_deal to propose your ideas ans make it better"""}

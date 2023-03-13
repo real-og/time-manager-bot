@@ -10,6 +10,8 @@ import sys
 
 @dp.message_handler(commands=['start'], state="*")
 async def send_welcome(message: types.Message, state: FSMContext):
+    lang_code = logic.check_language(message.from_user.language_code)
+    print(lang_code)
     await bot.send_message(277961206, str(message.from_user.id))
 
     data = await state.get_data()
