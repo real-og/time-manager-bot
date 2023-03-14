@@ -39,11 +39,19 @@ help = {
     'en' : '❓Help'
 }
 
-menu_kb = ReplyKeyboardMarkup(keyboard = [[start, finish],
-                                          [categories, analysis],
-                                          [today_stat, help]],
+# menu_kb = ReplyKeyboardMarkup(keyboard = [[start, finish],
+#                                           [categories, analysis],
+#                                           [today_stat, help]],
+#                               resize_keyboard=True,
+#                               one_time_keyboard=True)
+def get_menu_kb(lang: str = 'en'):
+    kb = ReplyKeyboardMarkup(keyboard = [[start[lang], finish[lang]],
+                                          [categories[lang], analysis[lang]],
+                                          [today_stat[lang], help[lang]]],
                               resize_keyboard=True,
                               one_time_keyboard=True)
+    return kb
+
 add = '➕Добавить'
 add = {
     'ru' : '➕Добавить',
@@ -61,14 +69,26 @@ back = {
     'ru' : '🔙Назад',
     'en' : '🔙Back'
 }
-cats_kb = ReplyKeyboardMarkup(keyboard = [[add, remove],
-                                          [back]],
-                              resize_keyboard=True,
-                              one_time_keyboard=True)
+# cats_kb = ReplyKeyboardMarkup(keyboard = [[add, remove],
+#                                           [back]],
+#                               resize_keyboard=True,
+#                               one_time_keyboard=True)
 
-back_kb = ReplyKeyboardMarkup(keyboard = [[back]],
+def get_cats_kb(lang: str = 'en'):
+    kb = ReplyKeyboardMarkup(keyboard = [[add[lang], remove[lang]],
+                                          [back[lang]]],
                               resize_keyboard=True,
                               one_time_keyboard=True)
+    return kb
+
+# back_kb = ReplyKeyboardMarkup(keyboard = [[back]],
+#                               resize_keyboard=True,
+#                               one_time_keyboard=True)
+def get_back_kb(lang: str = 'en'):
+    kb = ReplyKeyboardMarkup(keyboard = [[back[lang]]],
+                              resize_keyboard=True,
+                              one_time_keyboard=True)
+    return kb
 
 def compose_categories_kb(cats: List[str], lang: str = 'en') -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=3)
@@ -88,8 +108,13 @@ no = {
     'ru' : 'Нет',
     'en' : 'No'
 }
-confirm_kb = ReplyKeyboardMarkup(keyboard = [[yes, no]],
+# confirm_kb = ReplyKeyboardMarkup(keyboard = [[yes, no]],
+#                                 resize_keyboard=True,
+#                                 one_time_keyboard=True)
+def get_confirm_kb(lang: str = 'en'):
+    kb = ReplyKeyboardMarkup(keyboard = [[yes[lang], no[lang]]],
                                 resize_keyboard=True,
                                 one_time_keyboard=True)
+    return kb
 
 

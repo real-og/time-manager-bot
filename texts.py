@@ -21,9 +21,9 @@ async def compose_menu(state: FSMContext, lang: str = 'en') -> str:
     act = Action.get_entity(data.get('curr_action'))
     if act:
         if lang == 'ru':
-            return text + f"<i>Сейчас: <b>{act.name}</b> уже <b>{compose_time_delta(act.get_duration_secs())}</b></i>"
+            return text + f"<i>Сейчас: <b>{act.name}</b> уже <b>{compose_time_delta(act.get_duration_secs(), lang)}</b></i>"
         else:
-            return text + f"<i>Now: <b>{act.name}</b> for <b>{compose_time_delta(act.get_duration_secs())}</b></i>"
+            return text + f"<i>Now: <b>{act.name}</b> for <b>{compose_time_delta(act.get_duration_secs(), lang)}</b></i>"
     return text + f"<i>{nothing_happens[lang]}</i>"
 
 
@@ -78,9 +78,9 @@ def compose_started(name: str, start_datetime: datetime, lang: str = 'en') -> st
 
 def compose_finished(action: Action, lang: str = 'en') -> str:
     if lang == 'ru':
-        return f"⌛️ Окончено <b>{action.name}</b> спустя {compose_time_delta(action.get_duration_secs())}"
+        return f"⌛️ Окончено <b>{action.name}</b> спустя {compose_time_delta(action.get_duration_secs(), lang)}"
     else:
-        return f"⌛️ Finished <b>{action.name}</b> after {compose_time_delta(action.get_duration_secs())}"
+        return f"⌛️ Finished <b>{action.name}</b> after {compose_time_delta(action.get_duration_secs(), lang)}"
 
 def compose_confirmation(curr_action: Action, lang: str = 'en') -> str:
     if lang == 'ru':
@@ -137,9 +137,9 @@ async def compose_today_stat(state: FSMContext, lang: str = 'en') -> str:
     if curr_action:
         act = Action.get_entity(curr_action)
         if lang == 'ru':
-            text = f"<i>Прямо сейчас:</i>\n<b>{act.name}</b> уже {compose_time_delta(act.get_duration_secs())}"
+            text = f"<i>Прямо сейчас:</i>\n<b>{act.name}</b> уже {compose_time_delta(act.get_duration_secs(), lang)}"
         else:
-            text = f"<i>Now:</i>\n<b>{act.name}</b> lasts for {compose_time_delta(act.get_duration_secs())}"
+            text = f"<i>Now:</i>\n<b>{act.name}</b> lasts for {compose_time_delta(act.get_duration_secs(), lang)}"
     else:
         text = str(Action.get_entity(curr_action)) if curr_action else nothing_happens[lang]
 
@@ -150,7 +150,7 @@ async def compose_today_stat(state: FSMContext, lang: str = 'en') -> str:
         text += table_header[lang]
         for action_str in actions:
             action = Action.get_entity(action_str)
-            text += f"\n{action.start.time()} <b>| {action.name} |</b> {compose_time_delta(action.get_duration_secs())}"
+            text += f"\n{action.start.time()} <b>| {action.name} |</b> {compose_time_delta(action.get_duration_secs(), lang)}"
 
     if curr_action:
         actions.append(curr_action)
@@ -158,7 +158,7 @@ async def compose_today_stat(state: FSMContext, lang: str = 'en') -> str:
         text += f"\n\n{total_the_day[lang]}\n\n"
         sorted_dict = sorted(group_by_name(actions).items(), key=lambda x: x[1], reverse=True)
         for name, secs in sorted_dict:
-            text += f"<b>{name}: </b>{compose_time_delta(secs)}\n"
+            text += f"<b>{name}: </b>{compose_time_delta(secs, lang)}\n"
     return text
 
 total_the_day = {
@@ -207,3 +207,8 @@ help = {
 <b>"Categories"</b> - here you can manage the most frequent activities so that they appear as buttons when you decide to start something\n
 <b>"Today stat"</b> - all your activities in order and  the total time spent on each one.\n
 <b>"analytics"</b> - text @bot_deal to propose your ideas ans make it better"""}
+
+in_development = {
+    'ru' : 'В разработке', 
+    'en' : 'In progress'
+}
