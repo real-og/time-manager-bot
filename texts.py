@@ -4,75 +4,150 @@ from aiogram.dispatcher import FSMContext
 from logic import Action, group_by_name
 
 start = "lets go!"
-start = {   'ru' : 'Поехали',
-            'en' : "Let's go",
-            'be' : "Пачынаеи" 
+start = {
+    'ru' : 'Поехали',
+    'en' : "Let's go",
+    'be' : "Пачынаеи" 
 }
 
-# menu = "Ты в меню"
+menu_header = {
+    'ru': "📋<b>Меню</b>📋",
+    'en': "📋<b>Menu</b>📋"
+}
 
-async def compose_menu(state: FSMContext) -> str:
-    text = '📋<b>Меню</b>📋\n\n'
+async def compose_menu(state: FSMContext, lang: str = 'en') -> str:
+    text = f'{menu_header[lang]}\n\n'
     data = await state.get_data()
     act = Action.get_entity(data.get('curr_action'))
     if act:
-        return text + f"<i>Сейчас: <b>{act.name}</b> уже <b>{compose_time_delta(act.get_duration_secs())}</b></i>"
-    return text + "<i>Сейчас ничего не выполняется</i>"
+        if lang == 'ru':
+            return text + f"<i>Сейчас: <b>{act.name}</b> уже <b>{compose_time_delta(act.get_duration_secs())}</b></i>"
+        else:
+            return text + f"<i>Now: <b>{act.name}</b> for <b>{compose_time_delta(act.get_duration_secs())}</b></i>"
+    return text + f"<i>{nothing_happens[lang]}</i>"
 
 
-def compose_cats(categories: List[str]) -> str:
+def compose_cats(categories: List[str], lang: str = 'en') -> str:
     if categories == None or len(categories) == 0:
-        return 'Нет кастомных'
+        return no_custom_cats[lang]
     text = ''
     for i, cat in enumerate(categories):
         text += f"<b>{i+1}.</b> {cat}\n"
     return text
 
+no_custom_cats = {
+    'ru': "Нет кастомных",
+    'en': "No custom categories"
+}
+
 ask_for_num = 'Вводи <b>название</b> категории, которая будет удалёна🗑'
+ask_for_num = {
+    'ru': "Вводи <b>название</b> категории, которая будет удалёна🗑",
+    'en': "Type <b>the name</b> of category to remove🗑"
+}
+
 ask_for_name = "Вводи <b>название</b> кастомной категории📌"
+ask_for_name = {
+    'ru': "Вводи <b>название</b> кастомной категории📌",
+    'en': "Type <b>the name</b> of your custom category📌"
+}
 
 added = '<i><b>Добавлено☑️</b></i>'
+added = {
+    'ru': "<i><b>Добавлено☑️</b></i>",
+    'en': "<i><b>Added☑️</b></i>"
+}
+
 removed = '<i><b>Удалено☑️</b></i>'
+removed = {
+    'ru': "<i><b>Удалено☑️</b></i>",
+    'en': "<i><b>Removed☑️</b></i>"
+}
 
 choose_action = '📝<b>Что начинаешь делать?</b>\n\n<i>Выбирай из категорий или вводи текстом</i>'
+choose_action = {
+    'ru': "📝<b>Что начинаешь делать?</b>\n\n<i>Выбирай из категорий или вводи текстом</i>",
+    'en': "📝<b>What are you goint to start?</b>\n\n<i>Choose from categories below or type your one</i>"
+}
 
-def compose_started(name: str, start_datetime: datetime) -> str:
-    return f"⏳ Начато <b>{name}</b> в {start_datetime.strftime('%H:%M:%S')}"
+def compose_started(name: str, start_datetime: datetime, lang: str = 'en') -> str:
+    if lang == 'ru':
+        return f"⏳ Начато <b>{name}</b> в {start_datetime.strftime('%H:%M:%S')}"
+    else:
+        return f"⏳ Started <b>{name}</b> at {start_datetime.strftime('%H:%M:%S')}"
 
-def compose_finished(action: Action) -> str:
-    return f"⌛️ Окончено <b>{action.name}</b> спустя {compose_time_delta(action.get_duration_secs())}"
+def compose_finished(action: Action, lang: str = 'en') -> str:
+    if lang == 'ru':
+        return f"⌛️ Окончено <b>{action.name}</b> спустя {compose_time_delta(action.get_duration_secs())}"
+    else:
+        return f"⌛️ Finished <b>{action.name}</b> after {compose_time_delta(action.get_duration_secs())}"
 
-def compose_confirmation(curr_action: Action) -> str:
-    return f"Точно закончить <b>{curr_action.name}?</b>"
+def compose_confirmation(curr_action: Action, lang: str = 'en') -> str:
+    if lang == 'ru':
+        return f"Точно закончить <b>{curr_action.name}?</b>"
+    else:
+        return f"Are you sure to finish <b>{curr_action.name}?</b>"
 
 confirmed = 'Сделано'
-aborted = 'Отменено'
-wrong_input = 'не понял ...\n\n<i>Используй клавиатуру или /start</i>'
+confirmed = {
+    'ru': "Сделано",
+    'en': "Done"
+}
 
-def compose_time_delta(secs: int) -> str:
+aborted = 'Отменено'
+aborted = {
+    'ru': "Отменено",
+    'en': "Aborted"
+}
+
+wrong_input = 'не понял ...\n\n<i>Используй клавиатуру или /start</i>'
+wrong_input = {
+    'ru': "не понял ...\n\n<i>Используй клавиатуру или /start</i>",
+    'en': "can't understand ...\n\n<i>Use buttons or /start</i>"
+}
+
+def compose_time_delta(secs: int, lang: str = 'en') -> str:
     text = ''
     if secs >= 60 * 60:
-        text += f"{secs // (60 * 60)} ч  "
+        text += f"{secs // (60 * 60)} {hour_name[lang]}  "
     if secs >= 60:
-        text += f"{secs % (60 * 60) // 60} мин  "
-    text += f"{secs % 60} сек"
+        text += f"{secs % (60 * 60) // 60} {min_name[lang]}  "
+    text += f"{secs % 60} {sec_name[lang]}"
     return text
 
-async def compose_today_stat(state: FSMContext) -> str:
+sec_name = {
+    'ru': "сек",
+    'en': "sec"
+}
+
+min_name = {
+    'ru': "мин",
+    'en': " min"
+}
+
+hour_name = {
+    'ru': "ч",
+    'en': "h"
+}
+
+async def compose_today_stat(state: FSMContext, lang: str = 'en') -> str:
     data = await state.get_data()
     curr_action = data.get('curr_action')
     actions = data.get('actions')
     if curr_action:
         act = Action.get_entity(curr_action)
-        text = f"<i>Прямо сейчас:</i>\n<b>{act.name}</b> уже {compose_time_delta(act.get_duration_secs())}"
+        if lang == 'ru':
+            text = f"<i>Прямо сейчас:</i>\n<b>{act.name}</b> уже {compose_time_delta(act.get_duration_secs())}"
+        else:
+            text = f"<i>Now:</i>\n<b>{act.name}</b> lasts for {compose_time_delta(act.get_duration_secs())}"
     else:
-        text = str(Action.get_entity(curr_action)) if curr_action else "<i>Прямо сейчас ничего не выполняете</i>"
+        text = str(Action.get_entity(curr_action)) if curr_action else nothing_happens[lang]
 
     if len(actions) == 0:
-        text += '\n\n<i>Сегодня ещё без законченных активностей ((</i>'
+        text += '\n\n' + no_accomplished[lang]
     else:
-        text += '\n\n<b><i>***Сегодня уже сделано***</i></b>\n\n'
-        text += 'Начало  | Действие | Длительность'
+        text += f'\n\n{accomplished_header[lang]}\n\n'
+        text += table_header[lang]
         for action_str in actions:
             action = Action.get_entity(action_str)
             text += f"\n{action.start.time()} <b>| {action.name} |</b> {compose_time_delta(action.get_duration_secs())}"
@@ -80,35 +155,53 @@ async def compose_today_stat(state: FSMContext) -> str:
     if curr_action:
         actions.append(curr_action)
     if len(actions) != 0:
-        text += "\n\n<b><i>***Суммарно за день***</i></b>\n\n"
+        text += f"\n\n{total_the_day[lang]}\n\n"
         sorted_dict = sorted(group_by_name(actions).items(), key=lambda x: x[1], reverse=True)
         for name, secs in sorted_dict:
             text += f"<b>{name}: </b>{compose_time_delta(secs)}\n"
     return text
 
+total_the_day = {
+    'ru': "<b><i>***Суммарно за день***</i></b>",
+    'en': "<b><i>***During the day in total***</i></b>"
+}
+
+table_header = {
+    'ru': "Начало  | Действие | Длительность",
+    'en': "Start   | Action | Duration"
+}
+
+accomplished_header = {
+    'ru': "<b><i>***Сегодня уже сделано***</i></b>",
+    'en': "<b><i>***Today finished***</i></b>"
+}
+
+no_accomplished = {
+    'ru': "<i>Сегодня ещё без законченных активностей ((</i>",
+    'en': "<i>There is no finished actions yet</i>"
+}
+
 nothing_happens = "<i>Сейчас ничего не происходит</i>"
+nothing_happens = {
+    'ru': "<i>Сейчас ничего не происходит</i>",
+    'en': "<i>You're doing nothing now</i>"
+}
+
 no_such_category = "<i>Такой категории нет</i>"
+no_such_category= {
+    'ru' : '<i>Такой категории нет</i>',
+    'en' : '<i>No such categorie</i>'
+}
 
-help = """<b><i>Этот бот помогает следить, на что уходят 24 часа в твоих сутках</i></b>
-
-<b>"Начать"</b> - включай, когда начинаешь делать что-то новое: учить английский, готовить завтрак, играть к CS. Если что-то уже начато, оно автоматически завершится.
-
-<b>"Закончить"</b> - если решил что-то закончить и ничего не начинать. ушёл в себя.
-
-<b>"Категории"</b> - здесь ты можешь добавлять и удалять наиболее частые дела, чтобы потом более просто начинать и завершать их.
-
-<b>"Статистика сегодня"</b> - все твои действия по порядку, а также суммарное время, потраченное на каждое занятие.
-
-<b>"Аналитика"</b> - пиши @bot_deal, что хочешь здесь увидеть: отчёт по дням, отчет за неделю, а что в отчетах? а может график или диаграмму мм?"""
-
-help = {'ru' : """<b><i>Этот бот помогает следить, на что уходят 24 часа в твоих сутках</i></b>\n
+help = {
+    'ru' : """<b><i>Этот бот помогает следить, на что уходят 24 часа в твоих сутках</i></b>\n
 <b>"Начать"</b> - включай, когда начинаешь делать что-то новое: учить английский, готовить завтрак, играть к CS. Если что-то уже начато, оно автоматически завершится.\n
 <b>"Закончить"</b> - если решил что-то закончить и ничего не начинать. ушёл в себя.\n
 <b>"Категории"</b> - здесь ты можешь добавлять и удалять наиболее частые дела, чтобы потом более просто начинать и завершать их.\n
 <b>"Статистика сегодня"</b> - все твои действия по порядку, а также суммарное время, потраченное на каждое занятие.\n
 <b>"Аналитика"</b> - пиши @bot_deal, что хочешь здесь увидеть: отчёт по дням, отчет за неделю, а что в отчетах? а может график или диаграмму мм?""",
 
-        'en' : """<b><i>This bot helps to keep track of how you spend your time during the day</i></b>\n
+    'en' : """<b><i>This bot helps to keep track of how you spend your time during the day</i></b>\n
 <b>"Start"</b> - choose when you start doing something new: learning English, cooking breakfast, playing CS. If something has already started, it will automatically finished.\n
 <b>"Finish"</b> - if you decide to finish something and not start anything. Something you don't want to talk about or just staring ate the wall.\n
 <b>"Categories"</b> - here you can manage the most frequent activities so that they appear as buttons when you decide to start something\n
