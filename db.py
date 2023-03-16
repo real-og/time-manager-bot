@@ -27,4 +27,24 @@ def add_user(id_tg: int, username: str=None):
         _SQL = f'INSERT INTO users (id, username) \
                  VALUES ({id_tg}, $${username}$$) \
                  ON CONFLICT DO NOTHING;'
+
+def add_report(id_tg: int, report: str):
+    with Database() as curs:
+        _SQL = f'INSERT INTO reports (user_id, actions) \
+                 VALUES ({id_tg}, $${report}$$);'
         curs.execute(_SQL)
+
+def get_users() -> List[psycopg2.extras.RealDictCursor]:
+    with Database() as curs:
+        _SQL = f'SELECT * FROM users;'
+        curs.execute(_SQL)
+        return curs.fetchall()
+    
+def get_reports(id: int) -> List[psycopg2.extras.RealDictCursor]:
+    with Database() as curs:
+        _SQL = f'SELECT * FROM reports WHERE user_id = {id};'
+        curs.execute(_SQL)
+        return curs.fetchall()
+
+
+        

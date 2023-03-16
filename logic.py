@@ -105,5 +105,7 @@ def group_by_name(list: List[Union[Action, str]]) -> Dict[str, int]:
             result[item.name] = item.get_duration_secs()
     return result
 
+
+
     
 

@@ -5,16 +5,15 @@ import keyboards as kb
 from aiogram.dispatcher import FSMContext
 from states import *
 import logic
-import sys
+import db
 import loader
 
 
 @dp.message_handler(commands=['start'], state="*")
 async def send_welcome(message: types.Message, state: FSMContext):
-    await bot.send_message(ADMIN_ID, str(message.from_user.id))
+    db.add_user(message.from_user.id, message.from_user.username)
 
     lang_code = logic.check_language(message.from_user.language_code)
-    print(lang_code)
     data = await state.get_data()
     cats = data.get('cats', loader.default_cats[lang_code])
     curr_action = data.get('curr_action')

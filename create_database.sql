@@ -12,24 +12,17 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS reports (
             id serial PRIMARY KEY,
+            user_id INT,
             report_date date default CURRENT_DATE,
-            actions json default '[]'
+            actions json default '{}',
+            CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
-CREATE TABLE IF NOT EXISTS user_report (
-    user_id INT,
-    report_id INT,
-    PRIMARY KEY (user_id, report_id),
-    CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT fk_report FOREIGN KEY(report_id) REFERENCES reports(id)
-);
 
 createuser -P management_app
 
 grant all on reports to management_app;
-grant all on reports_id_seq to management_app;
 grant all on users to management_app;
-grant all on user_report to management_app;
 grant all on users_id_seq to management_app;
 
 

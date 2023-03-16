@@ -5,7 +5,7 @@ import logging
 import os
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 ADMIN_ID = str(os.environ.get('ADMIN_ID'))
 API_TOKEN = str(os.environ.get('BOT_TOKEN'))
 
