@@ -2,6 +2,7 @@ from typing import List
 from datetime import datetime
 from aiogram.dispatcher import FSMContext
 from logic import Action, group_by_name
+import json
 
 start = "lets go!"
 start = {
@@ -212,3 +213,12 @@ in_development = {
     'ru' : 'В разработке', 
     'en' : 'In progress'
 }
+
+def compose_daily_report(date : str, actions: List) -> str:
+    text = f"<b>{date}</b>\n\n"
+    if actions == None:
+        return text
+    sorted_dict = sorted(group_by_name(actions).items(), key=lambda x: x[1], reverse=True)
+    for name, secs in sorted_dict:
+        text += f"<b>{name}</b> - {compose_time_delta(secs)}\n"
+    return text

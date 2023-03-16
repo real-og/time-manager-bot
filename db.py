@@ -27,6 +27,7 @@ def add_user(id_tg: int, username: str=None):
         _SQL = f'INSERT INTO users (id, username) \
                  VALUES ({id_tg}, $${username}$$) \
                  ON CONFLICT DO NOTHING;'
+        curs.execute(_SQL)
 
 def add_report(id_tg: int, report: str):
     with Database() as curs:

@@ -2,9 +2,12 @@ from typing import List, Any, Optional, Dict, Union
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher import FSMContext
 from states import *
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 from aiogram import types
+import db
+from loader import dp, bot
+import texts
 
 
 default_cats = ['Сон', 'Дорога', 'Еда', 'Работа', 'Учёба']
@@ -14,7 +17,7 @@ def check_language(lang: str) -> str:
     return lang if lang in supported_langs else 'en'
 
 class Action():
-    def __init__(self, name: str, start: datetime, end: datetime = None) -> None:
+    def __init__(self, name: str, start: datetime = datetime.now(), end: datetime = None) -> None:
         self.name = name
         self.start = start
         self.end = end
@@ -75,7 +78,8 @@ async def get_state_var(state: FSMContext, var_name: str) -> Any:
 
 async def finish_current_action(state: FSMContext) -> None:
     data = await state.get_data()
-    actions = data.get('actions')
+    actions = data.get('actions', [])
+    # print(actions)
     curr_action_str = data.get('curr_action')
     if curr_action_str:
         curr_action = Action.get_entity(curr_action_str)
@@ -86,7 +90,8 @@ async def finish_current_action(state: FSMContext) -> None:
 
 async def start_action(action: Action, state: FSMContext) -> None:
     await finish_current_action(state)
-    await state.update_data(curr_action=action.json())
+    if action:
+        await state.update_data(curr_action=action.json())
 
 
 def group_by_name(list: List[Union[Action, str]]) -> Dict[str, int]:
@@ -104,6 +109,23 @@ def group_by_name(list: List[Union[Action, str]]) -> Dict[str, int]:
         else:
             result[item.name] = item.get_duration_secs()
     return result
+
+
+async def save_to_db():
+    users = db.get_users()
+    for user in users:
+        state = dp.current_state(chat=user['id'])
+        data = await state.get_data()
+        cur_action = Action.get_entity(data.get('curr_action'))
+        if cur_action:
+            cur_action.start = datetime.now()
+        await start_action(cur_action, state)
+        data = await state.get_data()
+        db.add_report(user['id'], json.dumps(group_by_name(data['actions']), ensure_ascii=False))
+        yesterday = datetime.now() - timedelta(days=1)
+        yesterday = yesterday.strftime("%Y:%m:%d")
+        await bot.send_message(user['id'], texts.compose_daily_report(yesterday, data['actions']))
+        await state.update_data(actions=[])
 
 
 
