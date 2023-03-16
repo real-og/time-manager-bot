@@ -5,3 +5,4 @@ test.py
 todo.txt
 __pycache__
 nohup.out
+test_redis.py
