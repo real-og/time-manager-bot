@@ -3,6 +3,7 @@ import psycopg2.extras
 from typing import List, Literal
 import os
 import json 
+import datetime
 
 class Database(object):
     def __init__(self):
@@ -44,6 +45,12 @@ def get_users() -> List[psycopg2.extras.RealDictCursor]:
 def get_reports(id: int) -> List[psycopg2.extras.RealDictCursor]:
     with Database() as curs:
         _SQL = f'SELECT * FROM reports WHERE user_id = {id};'
+        curs.execute(_SQL)
+        return curs.fetchall()
+    
+def get_report_by_date(id: int, date: datetime.date) -> List[psycopg2.extras.RealDictCursor]:
+    with Database() as curs:
+        _SQL = f'SELECT * FROM reports WHERE report_date = $${date}$$;'
         curs.execute(_SQL)
         return curs.fetchall()
 

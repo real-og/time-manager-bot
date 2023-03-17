@@ -3,6 +3,7 @@ from datetime import datetime
 from aiogram.dispatcher import FSMContext
 from logic import Action, group_by_name
 import json
+import db
 
 start = "lets go!"
 start = {
@@ -222,3 +223,57 @@ def compose_daily_report(date : str, actions: List) -> str:
     for name, secs in sorted_dict:
         text += f"<b>{name}</b> - {compose_time_delta(secs)}\n"
     return text
+
+analytics_menu = {
+    'ru': """<i><b>Этот бот скорее для резюме, однако выполняет то, на что заявлен</b></i>\n
+Если тебе интересно сотрудничать: нужен софт, нужен разработчик, дизайнер либо какое-то \
+решение для бизнеса или стартпа, хочешь автоматизировать свои процессы, собрать данные и \
+составить статистику, - пиши @bot_deal\n
+<i>Ну и фидбэк по боту ))</i>""",
+
+    'en': """<i><b>This bot is more about resume but still has some purpose</b></i>\n
+If you're interested in cooperation: you need good software, need an engineer or \
+designer for your business or startup, you have some crazy ideas or wanna collect \
+statistics, then text me @bot_deal\n
+<i>This particular bot feedback appreciated</i>"""
+}
+
+mystery_message = {
+    'ru': "<i><b>Немного аналитики</b></i>",
+    'en': "<i><b>Some statistics</b></i>"
+}
+
+no_yesterday_report = {
+    'ru' : '<i>Вчера ничего не было</i>',
+    'en' : '<i>There are no yesterday activities</i>'
+}
+def compose_comparison(id: int, today_data: dict, lang:str = 'en') -> str:
+    text = 'разница\n'
+    if today_data.get('curr_action') and (today_data['actions'] != None):
+        today_data['actions'].append(today_data['curr_action'])
+    yest_reports = db.get_report_by_date(id, datetime.now().date())
+    if (not yest_reports) or (not today_data['actions']):
+        return no_yesterday_report[lang]
+
+    yest_dict = yest_reports[0]['actions']
+
+    today_dict = group_by_name(today_data['actions'])
+
+    for k in yest_dict:
+        today = today_dict.get(k, 0)
+        dif = yest_dict[k] - today
+        text += f'{k}, {dif}\n'
+    for k in today_dict:
+        if not yest_dict.get(k):
+            text += f'{k}, {today_dict[k]}'
+    return(text)
+
+
+
+
+
+
+    
+    
+
+

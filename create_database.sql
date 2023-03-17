@@ -23,7 +23,7 @@ createuser -P management_app
 
 grant all on reports to management_app;
 grant all on users to management_app;
-grant all on users_id_seq to management_app;
+grant all on reports_id_seq to management_app;
 
 
 

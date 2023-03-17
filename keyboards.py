@@ -81,6 +81,8 @@ def get_cats_kb(lang: str = 'en'):
                               one_time_keyboard=True)
     return kb
 
+
+
 # back_kb = ReplyKeyboardMarkup(keyboard = [[back]],
 #                               resize_keyboard=True,
 #                               one_time_keyboard=True)
@@ -116,5 +118,29 @@ def get_confirm_kb(lang: str = 'en'):
                                 resize_keyboard=True,
                                 one_time_keyboard=True)
     return kb
+
+
+compare = {
+    'ru' : '🔎Сравнить со вчера',
+    'en' : '🔎Compare with yesterday'
+}
+
+weekly = {
+    'ru' : '📆Недельный отчёт',
+    'en' : '🔎Weekly report'
+}
+
+mystery = {
+    'ru' : '❓👽❓',
+    'en' : '❓👽❓'
+}
+def get_analytics_kb(lang: str = 'env'):
+    kb = ReplyKeyboardMarkup(keyboard = [[compare[lang]],
+                                         [weekly[lang]],
+                                         [mystery[lang], back[lang]]],
+                                resize_keyboard=True,
+                                one_time_keyboard=True)
+    return kb
+
 
 

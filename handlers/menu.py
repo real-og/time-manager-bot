@@ -12,8 +12,10 @@ async def handle_menu(message: types.Message, state: FSMContext):
     input = message.text
     if input == kb.start[lang_code]:
         cats = await logic.get_state_var(state, 'cats')
-        await message.answer(texts.choose_action[lang_code], reply_markup=kb.compose_categories_kb(cats))
+        await message.answer(texts.choose_action[lang_code],
+                             reply_markup=kb.compose_categories_kb(cats))
         await State.start_action.set()
+
     if input == kb.finish[lang_code]:
         curr_action_str = await logic.get_state_var(state, 'curr_action')
         if curr_action_str == None:
@@ -22,15 +24,20 @@ async def handle_menu(message: types.Message, state: FSMContext):
         await message.answer(texts.compose_confirmation(logic.Action.get_entity(curr_action_str), lang_code),
                                                         reply_markup=kb.get_confirm_kb(lang_code))
         await State.confirm_removing.set()
+
     if input == kb.analysis[lang_code]:
-        await message.answer(texts.in_development[lang_code], reply_markup=kb.get_menu_kb(lang_code))
+        await message.answer(texts.analytics_menu[lang_code], reply_markup=kb.get_analytics_kb(lang_code))
+        await State.analytics_menu.set()
+
     if input == kb.today_stat[lang_code]:
         text = await texts.compose_today_stat(state, lang_code)
         await message.answer(text, reply_markup=kb.get_menu_kb(lang_code))
+
     if input == kb.categories[lang_code]:
         cats = await logic.get_state_var(state, 'cats')
         await message.answer(texts.compose_cats(cats, lang_code), reply_markup=kb.get_cats_kb(lang_code))
         await State.categories.set()
+
     if input == kb.help[lang_code]:
         await message.answer(texts.help[lang_code], reply_markup=kb.get_menu_kb(lang_code))
         

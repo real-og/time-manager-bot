@@ -7,3 +7,4 @@ class State(StatesGroup):
     adding = State()
     start_action = State()
     confirm_removing = State()
+    analytics_menu = State()
