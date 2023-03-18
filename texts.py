@@ -229,13 +229,13 @@ mystery_message = {
 Если тебе интересно сотрудничать: нужен софт, нужен разработчик, дизайнер либо какое-то \
 решение для бизнеса или стартпа, хочешь автоматизировать свои процессы, собрать данные и \
 составить статистику, - пиши @bot_deal\n
-<i>Ну и фидбэк по боту ))</i>""",
+<i>Ну и фидбэк по этому боту тоже приятно ))</i>""",
 
     'en': """<i><b>This bot is more about resume but still has some purpose</b></i>\n
 If you're interested in cooperation: you need good software, need an engineer or \
 designer for your business or startup, you have some crazy ideas or wanna collect \
 statistics, then text me @bot_deal\n
-<i>This particular bot feedback appreciated</i>"""
+<i>This particular bot feedback appreciated too</i>"""
 }
 
 analytics_menu = {

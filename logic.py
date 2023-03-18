@@ -8,6 +8,7 @@ from aiogram import types
 import db
 from loader import dp, bot
 import texts
+import matplotlib.pyplot as plt
 
 
 default_cats = ['Сон', 'Дорога', 'Еда', 'Работа', 'Учёба']
@@ -126,6 +127,47 @@ async def save_to_db():
         yesterday = yesterday.strftime("%Y:%m:%d")
         await bot.send_message(user['id'], texts.compose_daily_report(yesterday, data['actions']))
         await state.update_data(actions=[])
+
+def generate_weekly_diagram(id: int, today_data: dict, lang_code: str = 'en') -> str:
+    week_ago = datetime.now() - timedelta(days=7)
+    reports = db.get_rerorts_since_date(id, week_ago)
+    res = dict()
+    for rep in reports:
+        for k, v in rep['actions'].items():
+            if res.get(k):
+                res[k] =+ v
+            else:
+                res[k] = v
+
+    if today_data.get('curr_action') and (today_data['actions'] != None):
+        today_data['actions'].append(today_data['curr_action'])
+    today_dict = group_by_name(today_data['actions'])
+    for k, v in today_dict.items():
+            if res.get(k):
+                res[k] =+ v
+            else:
+                res[k] = v
+    
+    fig, ax = plt.subplots()
+    wedges, labels, autopct = ax.pie(res.values(), labels=res.keys(), autopct='%1.1f%%', startangle=90)
+    
+
+    if lang_code == 'en':
+        ax.set_title('Weekly stats')
+        title = 'Activities'
+    elif lang_code == 'ru':
+        ax.set_title('Статистика за последние 7 дней')
+        title = 'Дела'
+
+    labels = [f"{k} - {texts.compose_time_delta(v, lang_code)}" for k, v in res.items()]
+ 
+    ax.legend(wedges, labels, title=title, loc='lower left', bbox_to_anchor=(-0.4, -0.1))
+    img_name = f"images/{id}.png"
+    plt.savefig(img_name)
+    return img_name
+
+
+
 
 
 

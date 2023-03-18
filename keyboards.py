@@ -23,8 +23,8 @@ categories = {
 
 analysis = 'Аналитика'
 analysis = {
-    'ru' : 'Аналитика',
-    'en' : 'Analytics'
+    'ru' : '🧮Аналитика',
+    'en' : '🧮Analytics'
 }
 
 today_stat = '📈Статистика сегодня'
@@ -127,7 +127,7 @@ compare = {
 
 weekly = {
     'ru' : '📆Недельный отчёт',
-    'en' : '🔎Weekly report'
+    'en' : '📆Weekly report'
 }
 
 mystery = {
