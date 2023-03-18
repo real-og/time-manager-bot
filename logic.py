@@ -155,11 +155,11 @@ def generate_weekly_diagram(id: int, today_data: dict, lang_code: str = 'en') ->
         today_data['actions'].append(today_data['curr_action'])
     today_dict = group_by_name(today_data['actions'])
     for k, v in today_dict.items():
-            if v:
+            if res.get(k):
                 res[k] += v
             else:
                 res[k] = v
-
+    
     fig, ax = plt.subplots()
     wedges, labels, autopct = ax.pie(res.values(),
                                      labels=res.keys(),

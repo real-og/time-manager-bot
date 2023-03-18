@@ -23,11 +23,9 @@ async def compose_menu(state: FSMContext, lang: str = 'en') -> str:
     act = Action.get_entity(data.get('curr_action'))
     if act:
         if lang == 'ru':
-            return text + f"<i>Сейчас: <b>{act.name}</b> уже \
-                            <b>{compose_time_delta(act.get_duration_secs(), lang)}</b></i>"
+            return text + f"<i>Сейчас: <b>{act.name}</b> уже <b>{compose_time_delta(act.get_duration_secs(), lang)}</b></i>"
         else:
-            return text + f"<i>Now: <b>{act.name}</b> for \
-                            <b>{compose_time_delta(act.get_duration_secs(), lang)}</b></i>"
+            return text + f"<i>Now: <b>{act.name}</b> for <b>{compose_time_delta(act.get_duration_secs(), lang)}</b></i>"
     return text + f"<i>{nothing_happens[lang]}</i>"
 
 
