@@ -13,7 +13,7 @@ async def handle_menu(message: types.Message, state: FSMContext):
     if input == kb.start[lang_code]:
         cats = await logic.get_state_var(state, 'cats')
         await message.answer(texts.choose_action[lang_code],
-                             reply_markup=kb.compose_categories_kb(cats))
+                             reply_markup=kb.compose_categories_kb(cats, lang_code))
         await State.start_action.set()
 
     if input == kb.finish[lang_code]:

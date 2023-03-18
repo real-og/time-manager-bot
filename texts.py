@@ -224,7 +224,7 @@ def compose_daily_report(date : str, actions: List) -> str:
         text += f"<b>{name}</b> - {compose_time_delta(secs)}\n"
     return text
 
-analytics_menu = {
+mystery_message = {
     'ru': """<i><b>Этот бот скорее для резюме, однако выполняет то, на что заявлен</b></i>\n
 Если тебе интересно сотрудничать: нужен софт, нужен разработчик, дизайнер либо какое-то \
 решение для бизнеса или стартпа, хочешь автоматизировать свои процессы, собрать данные и \
@@ -238,7 +238,7 @@ statistics, then text me @bot_deal\n
 <i>This particular bot feedback appreciated</i>"""
 }
 
-mystery_message = {
+analytics_menu = {
     'ru': "<i><b>Немного аналитики</b></i>",
     'en': "<i><b>Some statistics</b></i>"
 }
@@ -247,13 +247,28 @@ no_yesterday_report = {
     'ru' : '<i>Вчера ничего не было</i>',
     'en' : '<i>There are no yesterday activities</i>'
 }
+
+no_today_report = {
+    'ru' : '<i>Сегодня ничего не было</i>',
+    'en' : '<i>There are no today activities</i>'
+}
+
+diff_header = {
+    'ru': "<i><b>Разница</b></i>",
+    'en': "<i><b>Difference</b></i>"
+}
+
 def compose_comparison(id: int, today_data: dict, lang:str = 'en') -> str:
-    text = 'разница\n'
+    text = diff_header[lang] + '\n\n'
     if today_data.get('curr_action') and (today_data['actions'] != None):
         today_data['actions'].append(today_data['curr_action'])
     yest_reports = db.get_report_by_date(id, datetime.now().date())
-    if (not yest_reports) or (not today_data['actions']):
+
+    if not yest_reports:
         return no_yesterday_report[lang]
+    
+    if not today_data['actions']:
+        return no_today_report[lang]
 
     yest_dict = yest_reports[0]['actions']
 
@@ -261,11 +276,15 @@ def compose_comparison(id: int, today_data: dict, lang:str = 'en') -> str:
 
     for k in yest_dict:
         today = today_dict.get(k, 0)
-        dif = yest_dict[k] - today
-        text += f'{k}, {dif}\n'
+        diff = today - yest_dict[k]
+        if diff < 0:
+            text += f'🔴↘️<b>{k}:</b> -{compose_time_delta(abs(diff), lang)}\n'
+        else:
+            text += f'🟢↗️<b>{k}:</b> +{compose_time_delta(diff, lang)}\n'
+
     for k in today_dict:
         if not yest_dict.get(k):
-            text += f'{k}, {today_dict[k]}'
+            text += f'🟢↗️<b>{k}:</b> +{compose_time_delta(diff, lang)}\n'
     return(text)
 
 
