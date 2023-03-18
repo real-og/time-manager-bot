@@ -1,5 +1,5 @@
 from typing import List
-from datetime import datetime
+from datetime import datetime, timedelta
 from aiogram.dispatcher import FSMContext
 from logic import Action, group_by_name
 import db
@@ -275,7 +275,8 @@ def compose_comparison(id: int, today_data: dict, lang: str = 'en') -> str:
     text = diff_header[lang] + '\n\n'
     if today_data.get('curr_action') and (today_data['actions'] is not None):
         today_data['actions'].append(today_data['curr_action'])
-    yest_reports = db.get_report_by_date(id, datetime.now().date())
+    yesterday = datetime.now() - timedelta(days=1)
+    yest_reports = db.get_report_by_date(id, yesterday)
 
     if not yest_reports:
         return no_yesterday_report[lang]
