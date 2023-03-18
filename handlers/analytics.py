@@ -19,7 +19,7 @@ async def handle_analytics_choise(message: types.Message, state: FSMContext):
         data = await state.get_data()
         img_name = logic.generate_weekly_diagram(message.from_user.id, data, lang_code)
         with open(img_name, 'rb') as photo:
-            await message.answer_photo(photo)
+            await message.answer_photo(photo, reply_markup=kb.get_analytics_kb(lang_code))
         os.remove(img_name)
         
 
