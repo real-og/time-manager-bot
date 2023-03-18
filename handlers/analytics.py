@@ -22,9 +22,6 @@ async def handle_analytics_choise(message: types.Message, state: FSMContext):
             await message.answer_photo(photo, reply_markup=kb.get_analytics_kb(lang_code))
         os.remove(img_name)
         
-
-
-
     if input == kb.compare[lang_code]:
         data = await state.get_data()
         await message.answer(texts.compose_comparison(message.from_user.id,
