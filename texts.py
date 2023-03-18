@@ -254,8 +254,8 @@ no_today_report = {
 }
 
 diff_header = {
-    'ru': "<i><b>Разница</b></i>",
-    'en': "<i><b>Difference</b></i>"
+    'ru': "<i><b>Разница со вчера</b></i>",
+    'en': "<i><b>Difference from yesterday</b></i>"
 }
 
 def compose_comparison(id: int, today_data: dict, lang:str = 'en') -> str:
@@ -284,7 +284,7 @@ def compose_comparison(id: int, today_data: dict, lang:str = 'en') -> str:
 
     for k in today_dict:
         if not yest_dict.get(k):
-            text += f'🟢↗️<b>{k}:</b> +{compose_time_delta(diff, lang)}\n'
+            text += f'🟢↗️<b>{k}:</b> +{compose_time_delta(today_dict[k], lang)}\n'
     return(text)
 
 
