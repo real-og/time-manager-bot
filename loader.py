@@ -10,8 +10,8 @@ ADMIN_ID = str(os.environ.get('ADMIN_ID'))
 API_TOKEN = str(os.environ.get('BOT_TOKEN'))
 
 default_cats = {
-    'ru' : ['Сон', 'Дорога', 'Еда', 'Работа', 'Учёба'],
-    'en' : ['Working', 'Studing', 'Walking', 'Rest', 'Movies'],
+    'ru': ['Сон', 'Дорога', 'Еда', 'Работа', 'Учёба'],
+    'en': ['Working', 'Studing', 'Walking', 'Rest', 'Movies'],
 }
 supported_langs = ['en', 'ru']
 

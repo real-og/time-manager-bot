@@ -2,14 +2,13 @@ from typing import List
 from datetime import datetime
 from aiogram.dispatcher import FSMContext
 from logic import Action, group_by_name
-import json
 import db
 
 start = "lets go!"
 start = {
-    'ru' : 'Поехали',
-    'en' : "Let's go",
-    'be' : "Пачынаеи" 
+    'ru': 'Поехали',
+    'en': "Let's go",
+    'be': "Пачынаем",
 }
 
 menu_header = {
@@ -17,25 +16,29 @@ menu_header = {
     'en': "📋<b>Menu</b>📋"
 }
 
+
 async def compose_menu(state: FSMContext, lang: str = 'en') -> str:
     text = f'{menu_header[lang]}\n\n'
     data = await state.get_data()
     act = Action.get_entity(data.get('curr_action'))
     if act:
         if lang == 'ru':
-            return text + f"<i>Сейчас: <b>{act.name}</b> уже <b>{compose_time_delta(act.get_duration_secs(), lang)}</b></i>"
+            return text + f"<i>Сейчас: <b>{act.name}</b> уже \
+                            <b>{compose_time_delta(act.get_duration_secs(), lang)}</b></i>"
         else:
-            return text + f"<i>Now: <b>{act.name}</b> for <b>{compose_time_delta(act.get_duration_secs(), lang)}</b></i>"
+            return text + f"<i>Now: <b>{act.name}</b> for \
+                            <b>{compose_time_delta(act.get_duration_secs(), lang)}</b></i>"
     return text + f"<i>{nothing_happens[lang]}</i>"
 
 
 def compose_cats(categories: List[str], lang: str = 'en') -> str:
-    if categories == None or len(categories) == 0:
+    if categories is None or len(categories) == 0:
         return no_custom_cats[lang]
     text = ''
     for i, cat in enumerate(categories):
         text += f"<b>{i+1}.</b> {cat}\n"
     return text
+
 
 no_custom_cats = {
     'ru': "Нет кастомных",
@@ -72,11 +75,13 @@ choose_action = {
     'en': "📝<b>What are you goint to start?</b>\n\n<i>Choose from categories below or type your one</i>"
 }
 
+
 def compose_started(name: str, start_datetime: datetime, lang: str = 'en') -> str:
     if lang == 'ru':
         return f"⏳ Начато <b>{name}</b> в {start_datetime.strftime('%H:%M:%S')}"
     else:
         return f"⏳ Started <b>{name}</b> at {start_datetime.strftime('%H:%M:%S')}"
+
 
 def compose_finished(action: Action, lang: str = 'en') -> str:
     if lang == 'ru':
@@ -84,11 +89,13 @@ def compose_finished(action: Action, lang: str = 'en') -> str:
     else:
         return f"⌛️ Finished <b>{action.name}</b> after {compose_time_delta(action.get_duration_secs(), lang)}"
 
+
 def compose_confirmation(curr_action: Action, lang: str = 'en') -> str:
     if lang == 'ru':
         return f"Точно закончить <b>{curr_action.name}?</b>"
     else:
         return f"Are you sure to finish <b>{curr_action.name}?</b>"
+
 
 confirmed = 'Сделано'
 confirmed = {
@@ -108,6 +115,7 @@ wrong_input = {
     'en': "can't understand ...\n\n<i>Use buttons or /start</i>"
 }
 
+
 def compose_time_delta(secs: int, lang: str = 'en') -> str:
     text = ''
     if secs >= 60 * 60:
@@ -117,20 +125,24 @@ def compose_time_delta(secs: int, lang: str = 'en') -> str:
     text += f"{secs % 60} {sec_name[lang]}"
     return text
 
+
 sec_name = {
     'ru': "сек",
     'en': "sec"
 }
+
 
 min_name = {
     'ru': "мин",
     'en': " min"
 }
 
+
 hour_name = {
     'ru': "ч",
     'en': "h"
 }
+
 
 async def compose_today_stat(state: FSMContext, lang: str = 'en') -> str:
     data = await state.get_data()
@@ -190,20 +202,20 @@ nothing_happens = {
 }
 
 no_such_category = "<i>Такой категории нет</i>"
-no_such_category= {
-    'ru' : '<i>Такой категории нет</i>',
-    'en' : '<i>No such categorie</i>'
+no_such_category = {
+    'ru': '<i>Такой категории нет</i>',
+    'en': '<i>No such categorie</i>'
 }
 
 help = {
-    'ru' : """<b><i>Этот бот помогает следить, на что уходят 24 часа в твоих сутках</i></b>\n
+    'ru': """<b><i>Этот бот помогает следить, на что уходят 24 часа в твоих сутках</i></b>\n
 <b>"Начать"</b> - включай, когда начинаешь делать что-то новое: учить английский, готовить завтрак, играть к CS. Если что-то уже начато, оно автоматически завершится.\n
 <b>"Закончить"</b> - если решил что-то закончить и ничего не начинать. ушёл в себя.\n
 <b>"Категории"</b> - здесь ты можешь добавлять и удалять наиболее частые дела, чтобы потом более просто начинать и завершать их.\n
 <b>"Статистика сегодня"</b> - все твои действия по порядку, а также суммарное время, потраченное на каждое занятие.\n
 <b>"Аналитика"</b> - пиши @bot_deal, что хочешь здесь увидеть: отчёт по дням, отчет за неделю, а что в отчетах? а может график или диаграмму мм?""",
 
-    'en' : """<b><i>This bot helps to keep track of how you spend your time during the day</i></b>\n
+    'en': """<b><i>This bot helps to keep track of how you spend your time during the day</i></b>\n
 <b>"Start"</b> - choose when you start doing something new: learning English, cooking breakfast, playing CS. If something has already started, it will automatically finished.\n
 <b>"Finish"</b> - if you decide to finish something and not start anything. Something you don't want to talk about or just staring ate the wall.\n
 <b>"Categories"</b> - here you can manage the most frequent activities so that they appear as buttons when you decide to start something\n
@@ -211,18 +223,20 @@ help = {
 <b>"analytics"</b> - text @bot_deal to propose your ideas ans make it better"""}
 
 in_development = {
-    'ru' : 'В разработке', 
-    'en' : 'In progress'
+    'ru': 'В разработке',
+    'en': 'In progress'
 }
 
-def compose_daily_report(date : str, actions: List) -> str:
+
+def compose_daily_report(date: str, actions: List) -> str:
     text = f"<b>{date}</b>\n\n"
-    if actions == None:
+    if actions is None:
         return text
     sorted_dict = sorted(group_by_name(actions).items(), key=lambda x: x[1], reverse=True)
     for name, secs in sorted_dict:
         text += f"<b>{name}</b> - {compose_time_delta(secs)}\n"
     return text
+
 
 mystery_message = {
     'ru': """<i><b>Этот бот скорее для резюме, однако выполняет то, на что заявлен</b></i>\n
@@ -244,13 +258,13 @@ analytics_menu = {
 }
 
 no_yesterday_report = {
-    'ru' : '<i>Вчера ничего не было</i>',
-    'en' : '<i>There are no yesterday activities</i>'
+    'ru': '<i>Вчера ничего не было</i>',
+    'en': '<i>There are no yesterday activities</i>'
 }
 
 no_today_report = {
-    'ru' : '<i>Сегодня ничего не было</i>',
-    'en' : '<i>There are no today activities</i>'
+    'ru': '<i>Сегодня ничего не было</i>',
+    'en': '<i>There are no today activities</i>'
 }
 
 diff_header = {
@@ -258,15 +272,16 @@ diff_header = {
     'en': "<i><b>Difference from yesterday</b></i>"
 }
 
-def compose_comparison(id: int, today_data: dict, lang:str = 'en') -> str:
+
+def compose_comparison(id: int, today_data: dict, lang: str = 'en') -> str:
     text = diff_header[lang] + '\n\n'
-    if today_data.get('curr_action') and (today_data['actions'] != None):
+    if today_data.get('curr_action') and (today_data['actions'] is not None):
         today_data['actions'].append(today_data['curr_action'])
     yest_reports = db.get_report_by_date(id, datetime.now().date())
 
     if not yest_reports:
         return no_yesterday_report[lang]
-    
+
     if not today_data['actions']:
         return no_today_report[lang]
 
@@ -285,14 +300,4 @@ def compose_comparison(id: int, today_data: dict, lang:str = 'en') -> str:
     for k in today_dict:
         if not yest_dict.get(k):
             text += f'🟢↗️<b>{k}:</b> +{compose_time_delta(today_dict[k], lang)}\n'
-    return(text)
-
-
-
-
-
-
-    
-    
-
-
+    return text

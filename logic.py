@@ -14,11 +14,15 @@ import matplotlib.pyplot as plt
 default_cats = ['Сон', 'Дорога', 'Еда', 'Работа', 'Учёба']
 supported_langs = ['en', 'ru']
 
+
 def check_language(lang: str) -> str:
     return lang if lang in supported_langs else 'en'
 
+
 class Action():
-    def __init__(self, name: str, start: datetime = datetime.now(), end: datetime = None) -> None:
+    def __init__(self, name: str,
+                 start: datetime = datetime.now(),
+                 end: datetime = None) -> None:
         self.name = name
         self.start = start
         self.end = end
@@ -29,7 +33,7 @@ class Action():
     def get_duration_secs(self) -> int:
         end = self.end if self.end else datetime.now()
         return int((end - self.start).total_seconds())
-    
+
     def json(self) -> str:
         data = {
             "name": self.name,
@@ -43,15 +47,14 @@ class Action():
 
     @classmethod
     def get_entity(cls, action_str: str) -> Optional['Action']:
-        if action_str == None:
-            return None 
+        if action_str is None:
+            return None
         data = json.loads(action_str)
         action = Action(data['name'],
                         datetime.strptime(data['start'], "%Y-%m-%d %H:%M:%S"))
         if data['end']:
             action.end = datetime.strptime(data['end'], "%Y-%m-%d %H:%M:%S")
         return action
-
 
 
 async def add_to_state_list(state: FSMContext, list_name: str, item: Any):
@@ -61,6 +64,7 @@ async def add_to_state_list(state: FSMContext, list_name: str, item: Any):
     else:
         data[list_name] = list(item)
     await state.update_data(cats=data['cats'])
+
 
 async def remove_from_state_list(state: FSMContext, list_name: str, item: Any):
     data = await state.get_data()
@@ -73,9 +77,11 @@ async def remove_from_state_list(state: FSMContext, list_name: str, item: Any):
         return
     await state.update_data(cats=data['cats'])
 
+
 async def get_state_var(state: FSMContext, var_name: str) -> Any:
     data = await state.get_data()
     return data.get(var_name)
+
 
 async def finish_current_action(state: FSMContext) -> None:
     data = await state.get_data()
@@ -88,6 +94,7 @@ async def finish_current_action(state: FSMContext) -> None:
         actions.append(curr_action.json())
         curr_action_str = None
     await state.update_data(curr_action=curr_action_str, actions=actions)
+
 
 async def start_action(action: Action, state: FSMContext) -> None:
     await finish_current_action(state)
@@ -122,11 +129,16 @@ async def save_to_db():
             cur_action.start = datetime.now()
         await start_action(cur_action, state)
         data = await state.get_data()
-        db.add_report(user['id'], json.dumps(group_by_name(data['actions']), ensure_ascii=False))
+        db.add_report(user['id'],
+                      json.dumps(group_by_name(data['actions']),
+                                 ensure_ascii=False))
         yesterday = datetime.now() - timedelta(days=1)
         yesterday = yesterday.strftime("%Y:%m:%d")
-        await bot.send_message(user['id'], texts.compose_daily_report(yesterday, data['actions']))
+        await bot.send_message(user['id'],
+                               texts.compose_daily_report(yesterday,
+                                                          data['actions']))
         await state.update_data(actions=[])
+
 
 def generate_weekly_diagram(id: int, today_data: dict, lang_code: str = 'en') -> str:
     week_ago = datetime.now() - timedelta(days=7)
@@ -135,22 +147,24 @@ def generate_weekly_diagram(id: int, today_data: dict, lang_code: str = 'en') ->
     for rep in reports:
         for k, v in rep['actions'].items():
             if res.get(k):
-                res[k] =+ v
+                res[k] += v
             else:
                 res[k] = v
 
-    if today_data.get('curr_action') and (today_data['actions'] != None):
+    if today_data.get('curr_action') and (today_data['actions'] is not None):
         today_data['actions'].append(today_data['curr_action'])
     today_dict = group_by_name(today_data['actions'])
     for k, v in today_dict.items():
-            if res.get(k):
-                res[k] =+ v
+            if v:
+                res[k] += v
             else:
                 res[k] = v
-    
+
     fig, ax = plt.subplots()
-    wedges, labels, autopct = ax.pie(res.values(), labels=res.keys(), autopct='%1.1f%%', startangle=90)
-    
+    wedges, labels, autopct = ax.pie(res.values(),
+                                     labels=res.keys(),
+                                     autopct='%1.1f%%',
+                                     startangle=90)
 
     if lang_code == 'en':
         ax.set_title('Weekly stats')
@@ -160,16 +174,8 @@ def generate_weekly_diagram(id: int, today_data: dict, lang_code: str = 'en') ->
         title = 'Дела'
 
     labels = [f"{k} - {texts.compose_time_delta(v, lang_code)}" for k, v in res.items()]
- 
+
     ax.legend(wedges, labels, title=title, loc='lower left', bbox_to_anchor=(-0.4, -0.1))
     img_name = f"images/{id}.png"
     plt.savefig(img_name)
     return img_name
-
-
-
-
-
-
-    
-

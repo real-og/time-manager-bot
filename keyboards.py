@@ -5,38 +5,38 @@ from typing import List
 
 start = '✍️ Начать'
 start = {
-    'ru' : '✍️ Начать',
-    'en' : '✍️ Start'
+    'ru': '✍️ Начать',
+    'en': '✍️ Start'
 }
 
 finish = '💤 Закончить'
 finish = {
-    'ru' : '💤 Закончить',
-    'en' : '💤 Finish'
+    'ru': '💤 Закончить',
+    'en': '💤 Finish'
 }
 
 categories = '📌Категории'
 categories = {
-    'ru' : '📌Категории',
-    'en' : '📌Categories'
+    'ru': '📌Категории',
+    'en': '📌Categories'
 }
 
 analysis = 'Аналитика'
 analysis = {
-    'ru' : '🧮Аналитика',
-    'en' : '🧮Analytics'
+    'ru': '🧮Аналитика',
+    'en': '🧮Analytics'
 }
 
 today_stat = '📈Статистика сегодня'
 today_stat = {
-    'ru' : '📈Статистика сегодня',
-    'en' : '📈Today stat'
+    'ru': '📈Статистика сегодня',
+    'en': '📈Today stat'
 }
 
 help = '❓Помощь'
 help = {
-    'ru' : '❓Помощь',
-    'en' : '❓Help'
+    'ru': '❓Помощь',
+    'en': '❓Help'
 }
 
 # menu_kb = ReplyKeyboardMarkup(keyboard = [[start, finish],
@@ -54,7 +54,7 @@ def get_menu_kb(lang: str = 'en'):
 
 add = '➕Добавить'
 add = {
-    'ru' : '➕Добавить',
+    'ru': '➕Добавить',
     'en' : '➕Add'
 }
 
@@ -141,6 +141,3 @@ def get_analytics_kb(lang: str = 'env'):
                                 resize_keyboard=True,
                                 one_time_keyboard=True)
     return kb
-
-
-
