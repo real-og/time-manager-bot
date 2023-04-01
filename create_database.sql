@@ -18,9 +18,9 @@ CREATE TABLE IF NOT EXISTS reports (
             CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
-
+-- \q #back to postgres user
 createuser -P management_app
-
+-- psql
 grant all on reports to management_app;
 grant all on users to management_app;
 grant all on reports_id_seq to management_app;
