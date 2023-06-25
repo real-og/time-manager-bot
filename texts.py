@@ -211,14 +211,14 @@ help = {
 <b>"Закончить"</b> - если решил что-то закончить и ничего не начинать. ушёл в себя.\n
 <b>"Категории"</b> - здесь ты можешь добавлять и удалять наиболее частые дела, чтобы потом более просто начинать и завершать их.\n
 <b>"Статистика сегодня"</b> - все твои действия по порядку, а также суммарное время, потраченное на каждое занятие.\n
-<b>"Аналитика"</b> - пиши @bot_deal, что хочешь здесь увидеть: отчёт по дням, отчет за неделю, а что в отчетах? а может график или диаграмму мм?""",
+<b>"Аналитика"</b> - пиши @bot_dealla, что хочешь здесь увидеть: отчёт по дням, отчет за неделю, а что в отчетах? а может график или диаграмму мм?""",
 
     'en': """<b><i>This bot helps to keep track of how you spend your time during the day</i></b>\n
 <b>"Start"</b> - choose when you start doing something new: learning English, cooking breakfast, playing CS. If something has already started, it will automatically finished.\n
 <b>"Finish"</b> - if you decide to finish something and not start anything. Something you don't want to talk about or just staring ate the wall.\n
 <b>"Categories"</b> - here you can manage the most frequent activities so that they appear as buttons when you decide to start something\n
 <b>"Today stat"</b> - all your activities in order and  the total time spent on each one.\n
-<b>"analytics"</b> - text @bot_deal to propose your ideas ans make it better"""}
+<b>"analytics"</b> - text @bot_dealla to propose your ideas ans make it better"""}
 
 in_development = {
     'ru': 'В разработке',
@@ -246,7 +246,7 @@ mystery_message = {
     'en': """<i><b>This bot is more about resume but still has some purpose</b></i>\n
 If you're interested in cooperation: you need good software, need an engineer or \
 designer for your business or startup, you have some crazy ideas or wanna collect \
-statistics, then text me @bot_deal\n
+statistics, then text me @bot_dealla\n
 <i>This particular bot feedback appreciated too</i>"""
 }
 
